@@ -1,0 +1,93 @@
+{
+    "name": "phunky/laravel-messaging",
+    "description": "Extensible messaging package for Laravel",
+    "keywords": [
+        "laravel",
+        "laravel-messaging",
+        "messaging",
+        "chat",
+        "conversations"
+    ],
+    "homepage": "https://github.com/phunky/laravel-messaging",
+    "support": {
+        "issues": "https://github.com/phunky/laravel-messaging/issues",
+        "source": "https://github.com/phunky/laravel-messaging"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Phunky",
+            "email": "mark@phunky.co.uk",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.4",
+        "illuminate/contracts": "^13.0",
+        "illuminate/database": "^13.0",
+        "illuminate/events": "^13.0",
+        "illuminate/support": "^13.0",
+        "spatie/laravel-package-tools": "^1.16"
+    },
+    "require-dev": {
+        "larastan/larastan": "^3.0",
+        "laravel/boost": "^2.4",
+        "laravel/pint": "^1.14",
+        "nunomaduro/collision": "^8.8",
+        "orchestra/testbench": "^11.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-arch": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Phunky\\LaravelMessaging\\": "src/"
+        },
+        "files": [
+            "src/Support/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Phunky\\LaravelMessaging\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": "@composer run prepare",
+        "prepare": [
+            "@php vendor/bin/testbench package:discover --ansi",
+            "@php tests/cleanup-testbench-migrations.php"
+        ],
+        "analyse": "vendor/bin/phpstan analyse --memory-limit=512M",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.0.x-dev"
+        },
+        "laravel": {
+            "providers": [
+                "Phunky\\LaravelMessaging\\MessagingServiceProvider"
+            ],
+            "aliases": {
+                "Messenger": "Phunky\\LaravelMessaging\\Facades\\Messenger"
+            }
+        }
+    },
+    "suggest": {
+        "phunky/laravel-messaging-groups": "Group conversations extension for Laravel Messaging"
+    },
+    "prefer-stable": true
+}

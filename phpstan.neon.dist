@@ -1,0 +1,13 @@
+includes:
+    - phpstan-baseline.neon
+
+parameters:
+    # Level 6; remaining Eloquent generic/template noise is baselined until relations use @template on contracts.
+    level: 6
+    parallel:
+        maximumNumberOfProcesses: 1
+    paths:
+        - src
+        - config
+        - database
+    tmpDir: build/phpstan
