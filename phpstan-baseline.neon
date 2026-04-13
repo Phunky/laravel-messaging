@@ -1,0 +1,333 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Builders\\ConversationBuilder\:\:messages\(\) return type with generic interface Illuminate\\Contracts\\Pagination\\CursorPaginator does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Builders/ConversationBuilder.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Builders\\ConversationBuilder\:\:messages\(\) return type with generic interface Illuminate\\Contracts\\Pagination\\LengthAwarePaginator does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Builders/ConversationBuilder.php
+
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Contracts\\MessageContract\:\:conversation\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Contracts/MessageContract.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Contracts\\MessageContract\:\:messageable\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Contracts/MessageContract.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Contracts\\MessageContract\:\:events\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Contracts/MessageContract.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Contracts\\ConversationContract\:\:participants\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Contracts/ConversationContract.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Contracts\\ConversationContract\:\:messages\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Contracts/ConversationContract.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Contracts\\ConversationContract\:\:latestMessage\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Contracts/ConversationContract.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Contracts\\ConversationContract\:\:events\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Contracts/ConversationContract.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Contracts\\MessagingEventContract\:\:participant\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Contracts/MessagingEventContract.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Contracts\\MessagingEventContract\:\:subject\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Contracts/MessagingEventContract.php
+
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Contracts\\ParticipantContract\:\:conversation\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Contracts/ParticipantContract.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Contracts\\ParticipantContract\:\:messageable\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Contracts/ParticipantContract.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Contracts\\ParticipantContract\:\:events\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Contracts/ParticipantContract.php
+
+		-
+			message: '#^Class Phunky\\LaravelMessaging\\Models\\Conversation has PHPDoc tag @property for property \$meta with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Models/Conversation.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Models\\Conversation\:\:latestMessage\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Models/Conversation.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Models\\Conversation\:\:messages\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Models/Conversation.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Models\\Conversation\:\:events\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Models/Conversation.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Models\\Conversation\:\:participants\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Models/Conversation.php
+
+		-
+			message: '#^Unable to resolve the template type TRelatedModel in call to method Illuminate\\Database\\Eloquent\\Model\:\:hasMany\(\)$#'
+			identifier: argument.templateType
+			count: 2
+			path: src/Models/Conversation.php
+
+		-
+			message: '#^Unable to resolve the template type TRelatedModel in call to method Illuminate\\Database\\Eloquent\\Model\:\:morphMany\(\)$#'
+			identifier: argument.templateType
+			count: 1
+			path: src/Models/Conversation.php
+
+		-
+			message: '#^Class Phunky\\LaravelMessaging\\Models\\Message has PHPDoc tag @property for property \$meta with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Models/Message.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Models\\Message\:\:__call\(\) has parameter \$parameters with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Models/Message.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Models\\Message\:\:conversation\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Models/Message.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Models\\Message\:\:messageable\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Models/Message.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Models\\Message\:\:events\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Models/Message.php
+
+		-
+			message: '#^Unable to resolve the template type TRelatedModel in call to method Illuminate\\Database\\Eloquent\\Model\:\:belongsTo\(\)$#'
+			identifier: argument.templateType
+			count: 1
+			path: src/Models/Message.php
+
+		-
+			message: '#^Unable to resolve the template type TRelatedModel in call to method Illuminate\\Database\\Eloquent\\Model\:\:morphMany\(\)$#'
+			identifier: argument.templateType
+			count: 1
+			path: src/Models/Message.php
+
+		-
+			message: '#^Class Phunky\\LaravelMessaging\\Models\\MessagingEvent has PHPDoc tag @property for property \$meta with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Models/MessagingEvent.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Models\\MessagingEvent\:\:participant\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Models/MessagingEvent.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Models\\MessagingEvent\:\:subject\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Models/MessagingEvent.php
+
+		-
+			message: '#^Unable to resolve the template type TRelatedModel in call to method Illuminate\\Database\\Eloquent\\Model\:\:belongsTo\(\)$#'
+			identifier: argument.templateType
+			count: 1
+			path: src/Models/MessagingEvent.php
+
+		-
+			message: '#^Class Phunky\\LaravelMessaging\\Models\\Participant has PHPDoc tag @property for property \$meta with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Models/Participant.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Models\\Participant\:\:conversation\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Models/Participant.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Models\\Participant\:\:messageable\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Models/Participant.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Models\\Participant\:\:events\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Models/Participant.php
+
+		-
+			message: '#^Unable to resolve the template type TRelatedModel in call to method Illuminate\\Database\\Eloquent\\Model\:\:belongsTo\(\)$#'
+			identifier: argument.templateType
+			count: 1
+			path: src/Models/Participant.php
+
+		-
+			message: '#^Unable to resolve the template type TRelatedModel in call to method Illuminate\\Database\\Eloquent\\Model\:\:hasMany\(\)$#'
+			identifier: argument.templateType
+			count: 1
+			path: src/Models/Participant.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Services\\MessagingService\:\:emptyMessagesPagination\(\) return type with generic interface Illuminate\\Contracts\\Pagination\\CursorPaginator does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Services/MessagingService.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Services\\MessagingService\:\:emptyMessagesPagination\(\) return type with generic interface Illuminate\\Contracts\\Pagination\\LengthAwarePaginator does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Services/MessagingService.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Services\\MessagingService\:\:emptyPaginator\(\) return type with generic interface Illuminate\\Contracts\\Pagination\\CursorPaginator does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Services/MessagingService.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Services\\MessagingService\:\:emptyPaginator\(\) return type with generic interface Illuminate\\Contracts\\Pagination\\LengthAwarePaginator does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Services/MessagingService.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Services\\MessagingService\:\:paginateMessages\(\) return type with generic interface Illuminate\\Contracts\\Pagination\\CursorPaginator does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Services/MessagingService.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Services\\MessagingService\:\:paginateMessages\(\) return type with generic interface Illuminate\\Contracts\\Pagination\\LengthAwarePaginator does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Services/MessagingService.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Testing\\ExampleMessageable\:\:conversations\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphToMany does not specify its types\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \(2\-4 required\)$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Testing/ExampleMessageable.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Testing\\ExampleMessageable\:\:messages\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Testing/ExampleMessageable.php
+
+		-
+			message: '#^Unable to resolve the template type TRelatedModel in call to method Illuminate\\Database\\Eloquent\\Model\:\:morphMany\(\)$#'
+			identifier: argument.templateType
+			count: 1
+			path: src/Testing/ExampleMessageable.php
+
+		-
+			message: '#^Unable to resolve the template type TRelatedModel in call to method Illuminate\\Database\\Eloquent\\Model\:\:morphToMany\(\)$#'
+			identifier: argument.templateType
+			count: 1
+			path: src/Testing/ExampleMessageable.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Testing\\FakeMessagingService\:\:emptyMessagesPagination\(\) return type with generic interface Illuminate\\Contracts\\Pagination\\CursorPaginator does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Testing/FakeMessagingService.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Testing\\FakeMessagingService\:\:emptyMessagesPagination\(\) return type with generic interface Illuminate\\Contracts\\Pagination\\LengthAwarePaginator does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Testing/FakeMessagingService.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Testing\\FakeMessagingService\:\:paginateCollection\(\) return type with generic interface Illuminate\\Contracts\\Pagination\\CursorPaginator does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Testing/FakeMessagingService.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Testing\\FakeMessagingService\:\:paginateCollection\(\) return type with generic interface Illuminate\\Contracts\\Pagination\\LengthAwarePaginator does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Testing/FakeMessagingService.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Testing\\FakeMessagingService\:\:paginateMessages\(\) return type with generic interface Illuminate\\Contracts\\Pagination\\CursorPaginator does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Testing/FakeMessagingService.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessaging\\Testing\\FakeMessagingService\:\:paginateMessages\(\) return type with generic interface Illuminate\\Contracts\\Pagination\\LengthAwarePaginator does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Testing/FakeMessagingService.php
+
+		-
+			message: '#^Comparison operation ">" between int<1, max> and 0 is always true\.$#'
+			identifier: greater.alwaysTrue
+			count: 1
+			path: src/Services/MessagingService.php
