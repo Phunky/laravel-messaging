@@ -14,6 +14,8 @@ class MessageEdited implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithMessagingBroadcast, InteractsWithSockets, SerializesModels;
 
+    public const BROADCAST_NAME = 'messaging.message.edited';
+
     public function __construct(
         public Message $message,
         public string $originalBody,
@@ -29,6 +31,6 @@ class MessageEdited implements ShouldBroadcastNow
 
     public function broadcastAs(): string
     {
-        return 'messaging.message.edited';
+        return self::BROADCAST_NAME;
     }
 }

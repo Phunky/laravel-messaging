@@ -17,6 +17,8 @@ class ConversationCreated implements ShouldBroadcastNow, ShouldDispatchAfterComm
 {
     use Dispatchable, InteractsWithMessagingBroadcast, InteractsWithSockets, SerializesModels;
 
+    public const BROADCAST_NAME = 'messaging.conversation.created';
+
     /**
      * @param  Collection<int, Participant>  $participants
      */
@@ -35,6 +37,6 @@ class ConversationCreated implements ShouldBroadcastNow, ShouldDispatchAfterComm
 
     public function broadcastAs(): string
     {
-        return 'messaging.conversation.created';
+        return self::BROADCAST_NAME;
     }
 }

@@ -76,7 +76,7 @@ class MessagingService
                 $createdParticipants->push($participant);
             }
 
-            event(new ConversationCreated($conversation, $createdParticipants));
+            broadcast(new ConversationCreated($conversation, $createdParticipants))->toOthers();
 
             return [$conversation, true];
         });
@@ -132,7 +132,7 @@ class MessagingService
                 'sent_at' => now(),
             ]);
 
-            event(new MessageSent($message, $conversation));
+            broadcast(new MessageSent($message, $conversation))->toOthers();
 
             return $message;
         });
@@ -182,7 +182,7 @@ class MessagingService
             'edited_at' => now(),
         ]);
 
-        event(new MessageEdited($message, $originalBody));
+        broadcast(new MessageEdited($message, $originalBody))->toOthers();
 
         $message->refresh();
 
@@ -200,7 +200,7 @@ class MessagingService
 
         $message->delete();
 
-        event(new MessageDeleted($message, $conversation));
+        broadcast(new MessageDeleted($message, $conversation))->toOthers();
     }
 
     public function markReceived(Message $message, Messageable $actor): MessagingEvent
@@ -230,7 +230,7 @@ class MessagingService
         );
 
         if ($row->wasRecentlyCreated) {
-            event(new MessageReceived($row, $message, $participant));
+            broadcast(new MessageReceived($row, $message, $participant))->toOthers();
         }
 
         return $row;
@@ -263,7 +263,7 @@ class MessagingService
         );
 
         if ($row->wasRecentlyCreated) {
-            event(new MessageRead($row, $message, $participant));
+            broadcast(new MessageRead($row, $message, $participant))->toOthers();
         }
 
         return $row;
@@ -336,7 +336,7 @@ class MessagingService
         $eventClass::query()->insertOrIgnore($readRows);
 
         if ($affectedCount > 0) {
-            event(new AllMessagesRead($conversation, $reader, $affectedCount));
+            broadcast(new AllMessagesRead($conversation, $reader, $affectedCount))->toOthers();
         }
 
         return $affectedCount;

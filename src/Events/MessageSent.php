@@ -16,6 +16,8 @@ class MessageSent implements ShouldBroadcastNow, ShouldDispatchAfterCommit
 {
     use Dispatchable, InteractsWithMessagingBroadcast, InteractsWithSockets, SerializesModels;
 
+    public const BROADCAST_NAME = 'messaging.message.sent';
+
     public function __construct(
         public Message $message,
         public Conversation $conversation,
@@ -31,6 +33,6 @@ class MessageSent implements ShouldBroadcastNow, ShouldDispatchAfterCommit
 
     public function broadcastAs(): string
     {
-        return 'messaging.message.sent';
+        return self::BROADCAST_NAME;
     }
 }

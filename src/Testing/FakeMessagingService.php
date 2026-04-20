@@ -96,7 +96,7 @@ class FakeMessagingService extends MessagingService
             $this->fake->recordConversationCreated($conversation, $participants);
 
             $createdParticipantModels = new Collection($this->participantsByConversationKey[$hash]);
-            event(new ConversationCreated($conversation, $createdParticipantModels));
+            broadcast(new ConversationCreated($conversation, $createdParticipantModels))->toOthers();
         }
 
         return [$this->conversations[$hash], $created];
@@ -148,7 +148,7 @@ class FakeMessagingService extends MessagingService
         $this->messages[$message->getKey()] = $message;
 
         $this->fake->recordMessageSent($message, $conversation);
-        event(new MessageSent($message, $conversation));
+        broadcast(new MessageSent($message, $conversation))->toOthers();
 
         return $message;
     }
@@ -229,7 +229,7 @@ class FakeMessagingService extends MessagingService
         ]);
         $message->syncOriginal();
 
-        event(new MessageEdited($message, $originalBody));
+        broadcast(new MessageEdited($message, $originalBody))->toOthers();
 
         return $message;
     }
@@ -254,7 +254,7 @@ class FakeMessagingService extends MessagingService
 
         unset($this->messages[$message->getKey()]);
 
-        event(new MessageDeleted($message, $conversation));
+        broadcast(new MessageDeleted($message, $conversation))->toOthers();
     }
 
     public function markReceived(Message $message, Messageable $actor): MessagingEvent
@@ -285,7 +285,7 @@ class FakeMessagingService extends MessagingService
         $this->events[$key] = $row;
 
         $this->fake->recordReceiptReceived($message->getKey(), $this->participantKey($actor));
-        event(new MessageReceived($row, $message, $participant));
+        broadcast(new MessageReceived($row, $message, $participant))->toOthers();
 
         return $row;
     }
@@ -318,7 +318,7 @@ class FakeMessagingService extends MessagingService
         $this->events[$key] = $row;
 
         $this->fake->recordReceiptRead($message->getKey(), $this->participantKey($actor));
-        event(new MessageRead($row, $message, $participant));
+        broadcast(new MessageRead($row, $message, $participant))->toOthers();
 
         return $row;
     }
@@ -441,7 +441,7 @@ class FakeMessagingService extends MessagingService
         }
 
         if ($affected > 0) {
-            event(new AllMessagesRead($conversation, $reader, $affected));
+            broadcast(new AllMessagesRead($conversation, $reader, $affected))->toOthers();
         }
 
         return $affected;

@@ -15,6 +15,8 @@ class MessageDeleted implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithMessagingBroadcast, InteractsWithSockets, SerializesModels;
 
+    public const BROADCAST_NAME = 'messaging.message.deleted';
+
     public function __construct(
         public Message $message,
         public Conversation $conversation,
@@ -30,6 +32,6 @@ class MessageDeleted implements ShouldBroadcastNow
 
     public function broadcastAs(): string
     {
-        return 'messaging.message.deleted';
+        return self::BROADCAST_NAME;
     }
 }

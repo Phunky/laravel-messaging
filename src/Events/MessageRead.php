@@ -16,6 +16,8 @@ class MessageRead implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithMessagingBroadcast, InteractsWithSockets, SerializesModels;
 
+    public const BROADCAST_NAME = 'messaging.message.read';
+
     public function __construct(
         public MessagingEvent $messagingEvent,
         public Message $message,
@@ -32,6 +34,6 @@ class MessageRead implements ShouldBroadcastNow
 
     public function broadcastAs(): string
     {
-        return 'messaging.message.read';
+        return self::BROADCAST_NAME;
     }
 }
