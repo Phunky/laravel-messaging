@@ -3,7 +3,7 @@
 namespace Phunky\LaravelMessaging\Concerns;
 
 use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Broadcasting\PresenceChannel;
 use Phunky\LaravelMessaging\Models\Conversation;
 
 trait InteractsWithMessagingBroadcast
@@ -14,6 +14,14 @@ trait InteractsWithMessagingBroadcast
     }
 
     /**
+     * Conversations broadcast on presence channels so clients can derive
+     * online participants (channel members) and exchange ephemeral client
+     * events (e.g. `typing`) without any server-side dispatch.
+     *
+     * Host applications must implement the presence authorizer for
+     * `{channel_prefix}.conversation.{conversationId}` and return an
+     * associative array with at minimum an `id` and a `name` field.
+     *
      * @return array<int, Channel>
      */
     protected function messagingBroadcastChannels(Conversation|int|string $conversation): array
@@ -21,6 +29,6 @@ trait InteractsWithMessagingBroadcast
         $id = $conversation instanceof Conversation ? $conversation->getKey() : $conversation;
         $prefix = (string) config('messaging.broadcasting.channel_prefix', 'messaging');
 
-        return [new PrivateChannel("{$prefix}.conversation.{$id}")];
+        return [new PresenceChannel("{$prefix}.conversation.{$id}")];
     }
 }

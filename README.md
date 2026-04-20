@@ -151,7 +151,60 @@ Event::listen(MessageSending::class, function (MessageSending $event) {
 
 ## Broadcasting
 
-Set `broadcasting.enabled = true` in the config. Events that implement `ShouldBroadcast` — `ConversationCreated`, `MessageSent`, `MessageEdited`, `MessageDeleted`, `MessageReceived`, `MessageRead`, `AllMessagesRead` — will broadcast on private channels in the format `{channel_prefix}.conversation.{conversationId}` (default prefix: `messaging`). Authorize those channels in `routes/channels.php`. `MessageSending` is never broadcast.
+Set `broadcasting.enabled = true` in the config. Events that implement `ShouldBroadcast` — `ConversationCreated`, `MessageSent`, `MessageEdited`, `MessageDeleted`, `MessageReceived`, `MessageRead`, `AllMessagesRead` — will broadcast on **presence channels** in the format `{channel_prefix}.conversation.{conversationId}` (default prefix: `messaging`). `MessageSending` is never broadcast.
+
+### Authorizing the channel
+
+Presence channels require the authorizer to return an associative array of member metadata (or `null`/`false` to deny). At minimum expose an `id` and a `name`:
+
+```php
+// routes/channels.php
+use Illuminate\Support\Facades\Broadcast;
+
+Broadcast::channel('messaging.conversation.{conversationId}', function ($user, int $conversationId) {
+    if (! $user->conversations()->whereKey($conversationId)->exists()) {
+        return null;
+    }
+
+    return [
+        'id' => $user->getKey(),
+        'name' => $user->name,
+    ];
+});
+```
+
+### Client subscriptions
+
+Clients must join the channel as a presence channel, not a private one:
+
+```js
+window.Echo.join(`messaging.conversation.${id}`)
+    .here((members) => { /* initial members */ })
+    .joining((member) => { /* someone came online in this thread */ })
+    .leaving((member) => { /* someone left */ })
+    .listen('.messaging.message.sent', (payload) => { /* ... */ });
+```
+
+### Typing (client whispers)
+
+The package does not dispatch a PHP event for typing — it is a client-only concern. By convention, hosts use the reserved whisper event name `typing` on the same presence channel:
+
+```js
+// Sender
+channel.whisper('typing', {
+    messageable_type: 'App\\Models\\User',
+    messageable_id: userId,
+    name: userName,
+    typing: true, // or false when the sender stops
+});
+
+// Receiver
+channel.listenForWhisper('typing', (payload) => {
+    // payload.typing === true|false, payload.name, payload.messageable_id
+});
+```
+
+Because whispers are only delivered to currently-subscribed clients, typing is inherently scoped to participants who are online and have the channel open. Online status is derived from the presence member list.
 
 ## Lifecycle events
 
