@@ -36,4 +36,17 @@ class MessageRead implements ShouldBroadcastNow
     {
         return self::BROADCAST_NAME;
     }
+
+    /**
+     * @return array{conversation_id: int|string, message_id: int|string, messaging_event_id: int|string, participant_id: int|string}
+     */
+    public function broadcastWith(): array
+    {
+        return [
+            'conversation_id' => $this->message->getAttribute('conversation_id'),
+            'message_id' => $this->message->getKey(),
+            'messaging_event_id' => $this->messagingEvent->getKey(),
+            'participant_id' => $this->participant->getKey(),
+        ];
+    }
 }

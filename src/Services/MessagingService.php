@@ -2,6 +2,7 @@
 
 namespace Phunky\LaravelMessaging\Services;
 
+use Carbon\CarbonInterface;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,6 +15,7 @@ use InvalidArgumentException;
 use Phunky\LaravelMessaging\Contracts\Messageable;
 use Phunky\LaravelMessaging\Events\AllMessagesRead;
 use Phunky\LaravelMessaging\Events\ConversationCreated;
+use Phunky\LaravelMessaging\Events\ConversationInboxUpdated;
 use Phunky\LaravelMessaging\Events\MessageDeleted;
 use Phunky\LaravelMessaging\Events\MessageEdited;
 use Phunky\LaravelMessaging\Events\MessageRead;
@@ -106,6 +108,25 @@ class MessagingService
      */
     public function sendMessage(Conversation $conversation, Messageable $sender, string $body, array $meta = []): Message
     {
+        return $this->sendMessageUsing($conversation, $sender, $body, $meta);
+    }
+
+    /**
+     * Send a message and run extension/application persistence inside the same database transaction.
+     *
+     * The callback receives the persisted message, conversation, and sender. If it throws,
+     * the message insert is rolled back and no package broadcasts are dispatched.
+     *
+     * @param  array<string, mixed>  $meta
+     * @param  (callable(Message, Conversation, Messageable): mixed)|null  $afterPersisted
+     */
+    public function sendMessageUsing(
+        Conversation $conversation,
+        Messageable $sender,
+        string $body,
+        array $meta = [],
+        ?callable $afterPersisted = null,
+    ): Message {
         $this->assertParticipant($conversation, $sender);
 
         $sending = new MessageSending($conversation, $sender, $body, $meta);
@@ -121,7 +142,7 @@ class MessagingService
         /** @var class-string<Message> $messageClass */
         $messageClass = config('messaging.models.message');
 
-        return DB::transaction(function () use ($conversation, $sender, $body, $meta, $messageClass): Message {
+        return DB::transaction(function () use ($conversation, $sender, $body, $meta, $messageClass, $afterPersisted): Message {
             /** @var Message $message */
             $message = $messageClass::query()->create([
                 'conversation_id' => $conversation->getKey(),
@@ -131,6 +152,12 @@ class MessagingService
                 'meta' => $meta === [] ? null : $meta,
                 'sent_at' => now(),
             ]);
+
+            if ($afterPersisted !== null) {
+                $afterPersisted($message, $conversation, $sender);
+            }
+
+            $this->touchConversationActivity($conversation, $message->sent_at, 'message.sent');
 
             broadcast(new MessageSent($message, $conversation))->toOthers();
 
@@ -175,6 +202,11 @@ class MessagingService
     {
         $this->assertMessageSender($message, $actor);
 
+        $conversation = $message->conversation;
+        if (! $conversation instanceof Conversation) {
+            throw new CannotMessageException('Message has no conversation.');
+        }
+
         $originalBody = $message->body;
 
         $message->update([
@@ -182,7 +214,9 @@ class MessagingService
             'edited_at' => now(),
         ]);
 
-        broadcast(new MessageEdited($message, $originalBody))->toOthers();
+        $this->touchConversationActivity($conversation, $message->edited_at, 'message.edited');
+
+        broadcast(new MessageEdited($message, $originalBody, $conversation))->toOthers();
 
         $message->refresh();
 
@@ -199,6 +233,8 @@ class MessagingService
         }
 
         $message->delete();
+
+        $this->touchConversationActivity($conversation, now(), 'message.deleted');
 
         broadcast(new MessageDeleted($message, $conversation))->toOthers();
     }
@@ -336,6 +372,8 @@ class MessagingService
         $eventClass::query()->insertOrIgnore($readRows);
 
         if ($affectedCount > 0) {
+            $this->touchConversationActivity($conversation, $now, 'messages.read');
+
             broadcast(new AllMessagesRead($conversation, $reader, $affectedCount))->toOthers();
         }
 
@@ -343,7 +381,7 @@ class MessagingService
     }
 
     /**
-     * Conversations the messageable participates in, ordered by latest message time (desc).
+     * Conversations the messageable participates in, ordered by latest activity (desc).
      * Adds `unread_count` and `messages_max_sent_at` attributes; eager-loads `latestMessage`.
      *
      * @return Builder<Conversation>
@@ -373,6 +411,7 @@ class MessagingService
             })
             ->with(['latestMessage'])
             ->withMax('messages', 'sent_at')
+            ->orderByDesc('last_activity_at')
             ->orderByDesc('messages_max_sent_at')
             ->selectSub(
                 DB::table($messageTable.' as m')
@@ -392,6 +431,20 @@ class MessagingService
                     ->selectRaw('count(*)'),
                 'unread_count'
             );
+    }
+
+    public function touchConversationActivity(
+        Conversation $conversation,
+        ?CarbonInterface $activityAt = null,
+        ?string $activityType = null,
+    ): Conversation {
+        $conversation->forceFill([
+            'last_activity_at' => $activityAt ?? now(),
+        ])->saveQuietly();
+
+        broadcast(new ConversationInboxUpdated($conversation, $activityType));
+
+        return $conversation;
     }
 
     public function findMessage(int|string $id): Message

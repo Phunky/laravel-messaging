@@ -3,6 +3,7 @@
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Support\Facades\Config;
 use Phunky\LaravelMessaging\Events\ConversationCreated;
+use Phunky\LaravelMessaging\Events\ConversationInboxUpdated;
 use Phunky\LaravelMessaging\Events\MessageSent;
 use Phunky\LaravelMessaging\Facades\Messenger;
 use Phunky\LaravelMessaging\Models\Conversation;
@@ -28,7 +29,11 @@ describe('broadcasting', function () {
 
         $channels = $event->broadcastOn();
 
-        expect($channels[0]->name)->toBe('private-messaging.conversation.'.$conversation->getKey());
+        expect($channels[0]->name)->toBe('presence-messaging.conversation.'.$conversation->getKey())
+            ->and($event->broadcastWith())->toBe([
+                'conversation_id' => $conversation->getKey(),
+                'message_id' => $message->getKey(),
+            ]);
     });
 
     it('skips broadcasting when broadcasting is disabled', function () {
@@ -59,7 +64,11 @@ describe('broadcasting', function () {
         expect($event)->toBeInstanceOf(ShouldBroadcast::class)
             ->and($event->broadcastWhen())->toBeTrue();
 
-        expect($event->broadcastOn()[0]->name)->toBe('private-messaging.conversation.'.$conversation->getKey());
+        expect($event->broadcastOn()[0]->name)->toBe('presence-messaging.conversation.'.$conversation->getKey())
+            ->and($event->broadcastWith())->toBe([
+                'conversation_id' => $conversation->getKey(),
+                'participant_ids' => $conversation->participants()->pluck('id')->values()->all(),
+            ]);
     });
 
     it('broadcasts extension events that extend BroadcastableMessagingEvent', function () {
@@ -76,7 +85,28 @@ describe('broadcasting', function () {
 
         expect($event)->toBeInstanceOf(ShouldBroadcast::class)
             ->and($event->broadcastWhen())->toBeTrue()
-            ->and($event->broadcastOn()[0]->name)->toBe('private-messaging.conversation.'.$conversationId)
+            ->and($event->broadcastOn()[0]->name)->toBe('presence-messaging.conversation.'.$conversationId)
+            ->and($event->broadcastWith())->toBe(['conversation_id' => $conversationId])
             ->and($event->probe)->toBe('extension-ok');
+    });
+
+    it('broadcasts inbox updates to configured participant private channels', function () {
+        Config::set('messaging.broadcasting.enabled', true);
+        Config::set('messaging.broadcasting.inbox_channel_pattern', 'App.Models.User.{id}');
+
+        [$a, $b] = [User::create(['name' => 'A5']), User::create(['name' => 'B5'])];
+        $message = Messenger::conversation($a, $b)->as($a)->send('inbox probe');
+        $conversation = $message->conversation;
+
+        $event = new ConversationInboxUpdated($conversation, 'message.sent');
+        $channels = $event->broadcastOn();
+
+        expect($event)->toBeInstanceOf(ShouldBroadcast::class)
+            ->and($event->broadcastWhen())->toBeTrue()
+            ->and($event->broadcastAs())->toBe(ConversationInboxUpdated::BROADCAST_NAME)
+            ->and($event->broadcastWith()['conversation_id'])->toBe($conversation->getKey())
+            ->and($event->broadcastWith()['activity_type'])->toBe('message.sent')
+            ->and($channels)->toHaveCount(2)
+            ->and($channels[0]->name)->toStartWith('private-App.Models.User.');
     });
 });

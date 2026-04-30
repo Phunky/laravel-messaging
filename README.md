@@ -64,6 +64,21 @@ Messenger::conversation($userA, $userB)->as($userA)->send('Hello', meta: ['sourc
 Messenger::conversation($userA, $userB)->messages();
 ```
 
+For workflows that must create extension-owned rows with the message, use
+`MessagingService::sendMessageUsing()` so the callback runs inside the same
+database transaction:
+
+```php
+$message = app(MessagingService::class)->sendMessageUsing(
+    $conversation,
+    $sender,
+    'Hello with files',
+    afterPersisted: function (Message $message) use ($attachments, $sender) {
+        app(AttachmentService::class)->attachMany($message, $sender, $attachments);
+    },
+);
+```
+
 ### Receipts and read state
 
 ```php
@@ -122,6 +137,44 @@ Register extensions in `config/messaging.php`:
     \LaravelMessagingGroups\GroupsExtension::class,
 ],
 ```
+
+Extension classes can use `RegistersMessagingExtensionResources` to register
+their migration path, message macros, and message-delete cleanup consistently:
+
+```php
+class AttachmentsExtension implements MessagingExtension
+{
+    use RegistersMessagingExtensionResources;
+
+    public function boot(Application $app): void
+    {
+        $this->registerMessagingMigrations($app, __DIR__.'/../database/migrations');
+        $this->registerMessageMacro('attachments', function () {
+            return $this->hasMany(Attachment::class);
+        });
+        $this->deleteRelatedModelsWhenMessageDeleted(Attachment::class);
+    }
+}
+```
+
+### Package roadmap
+
+The next package boundaries should stay close to reusable behavior proven in the
+playground app:
+
+1. `laravel-messaging-inbox` — richer inbox projections, pinned/archived rows,
+  and prebuilt unread/activity queries on top of the core `last_activity_at`
+   and `messaging.inbox.updated` contracts.
+2. `laravel-messaging-echo` — an official Echo/Reverb bridge with presence
+  subscriptions, event-name constants, typing/recording whispers, and payload
+   normalizers for Livewire or vanilla clients.
+3. `laravel-messaging-media` — storage-backed attachments with validation
+  presets, temporary/signed URLs, thumbnails, and gallery queries.
+4. `laravel-messaging-moderation` — roles, muting, blocking, reports, removal
+  reasons, and audit events.
+5. `laravel-messaging-notifications`, `laravel-messaging-search`, and
+  `laravel-messaging-mentions` — focused add-ons for delivery, discovery, and
+   participant mention workflows once the inbox and client contracts are stable.
 
 ### Writing your own extension
 
@@ -185,6 +238,44 @@ window.Echo.join(`messaging.conversation.${id}`)
     .listen('.messaging.message.sent', (payload) => { /* ... */ });
 ```
 
+### Broadcast payloads
+
+Broadcast payloads include stable top-level identifiers so clients do not need
+to inspect serialized Eloquent model internals:
+
+
+| Event                                            | Stable payload keys                                                     |
+| ------------------------------------------------ | ----------------------------------------------------------------------- |
+| `ConversationCreated`                            | `conversation_id`, `participant_ids`                                    |
+| `MessageSent`, `MessageEdited`, `MessageDeleted` | `conversation_id`, `message_id`                                         |
+| `MessageReceived`, `MessageRead`                 | `conversation_id`, `message_id`, `messaging_event_id`, `participant_id` |
+| `AllMessagesRead`                                | `conversation_id`, `reader_type`, `reader_id`, `count`                  |
+
+
+Extension events that extend `BroadcastableMessagingEvent` automatically include
+`conversation_id`; extensions should add their own top-level resource ids.
+
+### Inbox updates
+
+The package maintains `conversations.last_activity_at` when messages are sent,
+edited, deleted, or marked read. Extensions can call
+`MessagingService::touchConversationActivity($conversation, activityAt: now(), activityType: 'reaction.updated')`
+when their own activity should bump an inbox.
+
+Set `broadcasting.inbox_channel_pattern` to broadcast participant-scoped inbox
+updates. The pattern supports `{id}` and `{type}` placeholders:
+
+```php
+'broadcasting' => [
+    'enabled' => true,
+    'channel_prefix' => 'messaging',
+    'inbox_channel_pattern' => 'App.Models.User.{id}',
+],
+```
+
+Inbox broadcasts use the short name `messaging.inbox.updated` and include
+`conversation_id`, `activity_type`, and `last_activity_at`.
+
 ### Typing (client whispers)
 
 The package does not dispatch a PHP event for typing — it is a client-only concern. By convention, hosts use the reserved whisper event name `typing` on the same presence channel:
@@ -214,7 +305,7 @@ Because whispers are only delivered to currently-subscribed clients, typing is i
 | `ConversationCreated` | New conversation created          | `$conversation`, `$participants`              |
 | `MessageSending`      | Before persistence                | `$conversation`, `$sender`, `$body`, `$meta`  |
 | `MessageSent`         | After persistence                 | `$message`, `$conversation`                   |
-| `MessageEdited`       | Body updated                      | `$message`, `$originalBody`                   |
+| `MessageEdited`       | Body updated                      | `$message`, `$originalBody`, `$conversation`  |
 | `MessageDeleted`      | Soft-deleted                      | `$message`, `$conversation`                   |
 | `MessageReceived`     | First `message.received` recorded | `$messagingEvent`, `$message`, `$participant` |
 | `MessageRead`         | First `message.read` recorded     | `$messagingEvent`, `$message`, `$participant` |

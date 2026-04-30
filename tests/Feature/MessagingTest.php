@@ -110,6 +110,21 @@ describe('messages', function () {
             ->and($message->conversation)->not->toBeNull();
     });
 
+    it('rolls back message creation when an atomic send callback fails', function () {
+        [$a, $b] = messagingUsers();
+        $service = app(MessagingService::class);
+        [$conversation] = $service->findOrCreateConversation($a, $b);
+
+        expect(fn () => $service->sendMessageUsing(
+            $conversation,
+            $a,
+            'rollback',
+            afterPersisted: fn () => throw new RuntimeException('after persisted failed'),
+        ))->toThrow(RuntimeException::class);
+
+        expect(Message::query()->where('body', 'rollback')->exists())->toBeFalse();
+    });
+
     it('can send as any participant', function () {
         [$a, $b] = messagingUsers();
 
@@ -136,6 +151,21 @@ describe('messages', function () {
 
         expect($message->sent_at)->not->toBeNull()
             ->and($message->sent_at->timestamp)->toBe(now()->timestamp);
+    });
+
+    it('tracks conversation activity when messages change', function () {
+        [$a, $b] = messagingUsers();
+
+        $this->freezeSecond();
+        $message = Messenger::conversation($a, $b)->as($a)->send('activity');
+        $conversation = $message->conversation->refresh();
+
+        expect($conversation->last_activity_at?->timestamp)->toBe(now()->timestamp);
+
+        $this->travel(5)->seconds();
+        Messenger::message($message->id)->as($a)->edit('activity updated');
+
+        expect($conversation->refresh()->last_activity_at?->timestamp)->toBe(now()->timestamp);
     });
 
     it('returns messages ordered by sent_at', function () {

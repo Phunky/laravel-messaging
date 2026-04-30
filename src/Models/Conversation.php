@@ -6,12 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Carbon;
 use Phunky\LaravelMessaging\Contracts\ConversationContract;
 
 /**
  * @property int $id
  * @property string $participant_hash
  * @property array|null $meta
+ * @property Carbon|null $last_activity_at
  */
 class Conversation extends Model implements ConversationContract
 {
@@ -26,6 +28,7 @@ class Conversation extends Model implements ConversationContract
     {
         return [
             'meta' => 'array',
+            'last_activity_at' => 'datetime',
         ];
     }
 

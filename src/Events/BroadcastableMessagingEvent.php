@@ -13,7 +13,7 @@ use Phunky\LaravelMessaging\Models\Conversation;
 
 /**
  * Base class for extension packages that dispatch custom domain events on the
- * same private conversation channels as core messaging (Reverb / Pusher, etc.).
+ * same presence conversation channels as core messaging (Reverb / Pusher, etc.).
  *
  * Subclasses should call {@see parent::__construct()} with the conversation
  * identifier when adding their own constructor parameters.
@@ -32,5 +32,15 @@ abstract class BroadcastableMessagingEvent implements ShouldBroadcastNow, Should
     public function broadcastOn(): array
     {
         return $this->messagingBroadcastChannels($this->conversation);
+    }
+
+    /**
+     * @return array{conversation_id: int|string}
+     */
+    public function broadcastWith(): array
+    {
+        return [
+            'conversation_id' => $this->messagingConversationId($this->conversation),
+        ];
     }
 }

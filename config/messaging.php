@@ -32,12 +32,13 @@ return [
     | Broadcasting
     |--------------------------------------------------------------------------
     | When enabled, core messaging events and BroadcastableMessagingEvent
-    | subclasses implement ShouldBroadcast on private channels:
+    | subclasses broadcast on presence channels:
     | {channel_prefix}.conversation.{conversationId}
     */
     'broadcasting' => [
         'enabled' => false,
         'channel_prefix' => 'messaging',
+        'inbox_channel_pattern' => null,
     ],
 
     /*

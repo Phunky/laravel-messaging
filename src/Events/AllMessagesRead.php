@@ -35,4 +35,17 @@ class AllMessagesRead implements ShouldBroadcastNow
     {
         return self::BROADCAST_NAME;
     }
+
+    /**
+     * @return array{conversation_id: int|string, reader_type: string, reader_id: int|string, count: int}
+     */
+    public function broadcastWith(): array
+    {
+        return [
+            'conversation_id' => $this->conversation->getKey(),
+            'reader_type' => $this->reader->getMorphClass(),
+            'reader_id' => $this->reader->getKey(),
+            'count' => $this->count,
+        ];
+    }
 }

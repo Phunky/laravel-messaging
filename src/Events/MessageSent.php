@@ -35,4 +35,15 @@ class MessageSent implements ShouldBroadcastNow, ShouldDispatchAfterCommit
     {
         return self::BROADCAST_NAME;
     }
+
+    /**
+     * @return array{conversation_id: int|string, message_id: int|string}
+     */
+    public function broadcastWith(): array
+    {
+        return [
+            'conversation_id' => $this->conversation->getKey(),
+            'message_id' => $this->message->getKey(),
+        ];
+    }
 }

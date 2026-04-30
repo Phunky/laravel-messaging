@@ -26,6 +26,7 @@ class MessagingServiceProvider extends PackageServiceProvider
                 '2025_04_08_100001_create_participants_table',
                 '2025_04_08_100002_create_messages_table',
                 '2025_04_08_100003_create_events_table',
+                '2025_04_08_100004_add_last_activity_at_to_conversations_table',
             )
             ->runsMigrations();
     }

@@ -26,9 +26,14 @@ trait InteractsWithMessagingBroadcast
      */
     protected function messagingBroadcastChannels(Conversation|int|string $conversation): array
     {
-        $id = $conversation instanceof Conversation ? $conversation->getKey() : $conversation;
+        $id = $this->messagingConversationId($conversation);
         $prefix = (string) config('messaging.broadcasting.channel_prefix', 'messaging');
 
         return [new PresenceChannel("{$prefix}.conversation.{$id}")];
+    }
+
+    protected function messagingConversationId(Conversation|int|string $conversation): int|string
+    {
+        return $conversation instanceof Conversation ? $conversation->getKey() : $conversation;
     }
 }

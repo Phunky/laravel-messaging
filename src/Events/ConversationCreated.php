@@ -39,4 +39,18 @@ class ConversationCreated implements ShouldBroadcastNow, ShouldDispatchAfterComm
     {
         return self::BROADCAST_NAME;
     }
+
+    /**
+     * @return array{conversation_id: int|string, participant_ids: list<int|string>}
+     */
+    public function broadcastWith(): array
+    {
+        return [
+            'conversation_id' => $this->conversation->getKey(),
+            'participant_ids' => $this->participants
+                ->map(fn (Participant $participant): int|string => $participant->getKey())
+                ->values()
+                ->all(),
+        ];
+    }
 }
